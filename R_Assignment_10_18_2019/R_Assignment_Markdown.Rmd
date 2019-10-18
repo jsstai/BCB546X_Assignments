@@ -1,0 +1,358 @@
+---
+title: "R_Assignment"
+author: "Amruta B"
+date: "10/17/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#loading packages tidyverse and dplyr
+
+library(tidyverse)
+library(plyr)
+library(dplyr)
+library(ggplot2)
+
+#Making data files 
+fang <- read.table('https://raw.githubusercontent.com/EEOB-BioData/BCB546X-Fall2019/master/assignments/UNIX_Assignment/fang_et_al_genotypes.txt',header=TRUE,sep="\t",stringsAsFactors = FALSE)
+snp <- read.table('https://raw.githubusercontent.com/EEOB-BioData/BCB546X-Fall2019/master/assignments/UNIX_Assignment/snp_position.txt', header=TRUE, sep = "\t",stringsAsFactors = FALSE)
+rownames(snp) <- snp$SNP_ID
+snp$SNP_ID <- NULL
+##Getting the file info
+file.info('fang_et_al_genotypes.txt',extra_cols=TRUE)
+file.info('snp_position.txt',extra_cols= TRUE)
+
+
+## Inspecting fang dataset
+
+head(fang)
+tail(fang)
+dim(fang)
+nrow(fang)
+ncol(fang)
+
+#The inpection indicates that 
+# - there are 2782 rows and 986 columns in the fang genotypes file
+
+##Inspecting snp dataset
+head(snp)
+tail(snp)
+dim(snp)
+nrow(snp)
+ncol(snp)
+
+## The inspection indicates that there are 983 rows and 15 columns in the snp_position file
+summary(fang)
+summary(snp)
+
+## Extracting maize sequences
+
+maize_genotypes <- fang %>% filter(Group %in% c("ZMMIL","ZMMLR","ZMMMR"))
+teosinte_genotypes <- fang%>%filter(Group %in% c("ZMPBA","ZMPIL", "ZMPJA"))
+ncol(maize_genotypes)
+ncol(teosinte_genotypes)
+
+#Transposing maize data
+
+maize_transposed <- setNames(data.frame(t(maize_genotypes[-1])), maize_genotypes[,1])
+teosinte_transposed <- setNames(data.frame(t(teosinte_genotypes[-1])), teosinte_genotypes[,1])
+
+#Removing 2nd and 3rd columns of maize and teosinte
+maize_transposed <- maize_transposed[-c(1,2),]
+teosinte_transposed<-teosinte_transposed[-c(1,2),]
+
+#Merging maize and teosinte files
+
+maize_merged <- merge(x =snp[ , c("Chromosome","Position")], y = maize_transposed, by.x = 0, by.y = 0, all.y = TRUE)
+teosinte_merged <- merge(x=snp[,c("Chromosome","Position")], y = teosinte_transposed, by.x = 0, by.y = 0, all.y =TRUE)
+maize_merged <- maize_merged %>% rename("SNPs_ID" ="Row.names")
+teosinte_merged <- teosinte_merged %>% rename("SNP_ID"="Row.names")
+
+Maize_Chr1 <- maize_merged %>%
+  filter(Chromosome %in% c("1")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Maize_Chr1.txt")
+
+Maize_Chr2 <- maize_merged %>%
+  filter(Chromosome %in% c("2")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Maize_Chr2.txt")
+
+Maize_Chr3 <- maize_merged %>%
+  filter(Chromosome %in% c("3")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Maize_Chr3.txt")
+
+Maize_Chr4 <- maize_merged %>%
+  filter(Chromosome %in% c("4")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Maize_Chr4.txt")
+
+Maize_Chr5 <- maize_merged %>%
+  filter(Chromosome %in% c("5")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Maize_Chr5.txt")
+
+Maize_Chr6 <- maize_merged %>%
+  filter(Chromosome %in% c("6")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Maize_Chr6.txt")
+
+Maize_Chr7 <- maize_merged %>%
+  filter(Chromosome %in% c("7")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Maize_Chr7.txt")
+
+Maize_Chr8 <- maize_merged %>%
+  filter(Chromosome %in% c("8")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Maize_Chr8.txt")
+
+Maize_Chr9 <- maize_merged %>%
+  filter(Chromosome %in% c("9")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Maize_Chr9.txt")
+
+Maize_Chr10 <- maize_merged %>%
+  filter(Chromosome %in% c("10")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Maize_Chr10.txt")
+
+# Decreasing order of maize genotypes
+
+Maize_dec_Chr1 <- maize_merged %>%
+  filter(Chromosome %in% c("1")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Maize_dec_Chr1.txt")
+
+Maize_dec_Chr2 <- maize_merged %>%
+  filter(Chromosome %in% c("2")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Maize_dec_Chr2.txt")
+
+Maize_dec_Chr3 <- maize_merged %>%
+  filter(Chromosome %in% c("3")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Maize_dec_Chr3.txt")
+
+Maize_dec_Chr4 <- maize_merged %>%
+  filter(Chromosome %in% c("4")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Maize_dec_Chr4.txt")
+
+Maize_dec_Chr5 <- maize_merged %>%
+  filter(Chromosome %in% c("5")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Maize_dec_Chr5.txt")
+
+Maize_dec_Chr6 <- maize_merged %>%
+  filter(Chromosome %in% c("6")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Maize_dec_Chr6.txt")
+
+Maize_dec_Chr7 <- maize_merged %>%
+  filter(Chromosome %in% c("7")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Maize_dec_Chr7.txt")
+
+Maize_dec_Chr8 <- maize_merged %>%
+  filter(Chromosome %in% c("8")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Maize_dec_Chr8.txt")
+
+Maize_dec_Chr9 <- maize_merged %>%
+  filter(Chromosome %in% c("9")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Maize_dec_Chr9.txt")
+
+Maize_dec_Chr10 <- maize_merged %>%
+  filter(Chromosome %in% c("10")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Maize_dec_Chr10.txt")
+
+# Subsetting teosinte file based on individual chr 1-10 & arranging in decreasing order of position
+Teosinte_Chr1 <- teosinte_merged %>%
+  filter(Chromosome %in% c("1")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Teosinte_Chr1.txt")
+
+Teosinte_Chr2 <- teosinte_merged %>%
+  filter(Chromosome %in% c("2")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Teosinte_Chr2.txt")
+
+Teosinte_Chr3 <- teosinte_merged %>%
+  filter(Chromosome %in% c("3")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Teosinte_Chr3.txt")
+
+Teosinte_Chr4 <- teosinte_merged %>%
+  filter(Chromosome %in% c("4")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Teosinte_Chr4.txt")
+
+Teosinte_Chr5 <- teosinte_merged %>%
+  filter(Chromosome %in% c("5")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Teosinte_Chr5.txt")
+
+Teosinte_Chr6 <- teosinte_merged %>%
+  filter(Chromosome %in% c("6")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Teosinte_Chr6.txt")
+
+Teosinte_Chr7 <- teosinte_merged %>%
+  filter(Chromosome %in% c("7")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Teosinte_Chr7.txt")
+
+Teosinte_Chr8 <- teosinte_merged %>%
+  filter(Chromosome %in% c("8")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Teosinte_Chr8.txt")
+
+Teosinte_Chr9 <- teosinte_merged %>%
+  filter(Chromosome %in% c("9")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Teosinte_Chr9.txt")
+
+Teosinte_Chr10 <- teosinte_merged %>%
+  filter(Chromosome %in% c("10")) %>%
+  arrange(as.numeric(Position)) %>%
+  write_csv("Teosinte_Chr10.txt")
+
+# Subsetting maize file based on individual chr 1-10 & arranging in decreasing order of position
+Teosinte_dec_Chr1 <- teosinte_merged %>%
+  filter(Chromosome %in% c("1")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Teosinte_dec_Chr1.txt")
+
+Teosinte_dec_Chr2 <- teosinte_merged %>%
+  filter(Chromosome %in% c("2")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Teosinte_dec_Chr2.txt")
+
+Teosinte_dec_Chr3 <- teosinte_merged %>%
+  filter(Chromosome %in% c("3")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Teosinte_dec_Chr3.txt")
+
+Teosinte_dec_Chr4 <- teosinte_merged %>%
+  filter(Chromosome %in% c("4")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Teosinte_dec_Chr4.txt")
+
+Teosinte_dec_Chr5 <- teosinte_merged %>%
+  filter(Chromosome %in% c("5")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Teosinte_dec_Chr5.txt")
+
+Teosinte_dec_Chr6 <- teosinte_merged %>%
+  filter(Chromosome %in% c("6")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Teosinte_dec_Chr6.txt")
+
+Teosinte_dec_Chr7 <- teosinte_merged %>%
+  filter(Chromosome %in% c("7")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Teosinte_dec_Chr7.txt")
+
+Teosinte_dec_Chr8 <- teosinte_merged %>%
+  filter(Chromosome %in% c("8")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Teosinte_dec_Chr8.txt")
+
+Teosinte_dec_Chr9 <- teosinte_merged %>%
+  filter(Chromosome %in% c("9")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Teosinte_dec_Chr9.txt")
+
+Teosinte_dec_Chr10 <- teosinte_merged %>%
+  filter(Chromosome %in% c("10")) %>%
+  arrange(desc(as.numeric(Position))) %>%
+  write_csv("Teosinte_dec_Chr10.txt")
+
+#Data Visualization
+
+fang_transpose <- setNames(data.frame(t(fang[-1])),fang[,1])
+fang_transposed_data <- fang_transpose[-c(1,2),]
+fang_merged <- merge(x = snp[ , c("Chromosome","Position")], y = fang_transposed_data, by.x = 0, by.y = 0, all.y = TRUE)
+fang_merged <- fang_merged %>% rename("SNP_ID" = "Row.names")
+
+# File for plotting SNPs per chromosome
+
+file_plot_count <- count(fang_merged, "Chromosome") %>% filter(Chromosome %in% c("1","2","3","4","5","6","7","8","9","10"))
+
+# View(File_plot_count)
+# Plotting SNPs per chromosome 
+snp_per_chromosome <- ggplot(file_plot_count, aes(x='Chromosome',fill=y)) + geom_bar(stat="identity") + theme_minimal()
+snp_per_chromosome
+
+# Subsetting file for plotting distribution of SNPs on chromosomes
+file_dist <- fang_merged %>%
+  select(Chromosome, Position) %>%
+  filter(Chromosome %in% c("1","2","3","4","5","6","7","8","9","10")) %>%
+  arrange(as.numeric(Position))
+  #arrange(as.numeric(Chromosome), as.numeric(Position))
+
+
+# PLotting distribution of SNPs on chromosomes
+SNP_distribution <- ggplot(file_dist, aes(x=Chromosome, y=Position)) + geom_point(stat = "identity", position = "identity", size=1, color = "blue")
+SNP_distribution
+
+modified_fang <- fang %>%
+  mutate_if(is.character, str_replace_all, pattern = "A/A", replacement = "Homozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "T/T", replacement = "Homozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "G/G", replacement = "Homozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "C/C", replacement = "Homozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "A/T", replacement = "Heterozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "A/G", replacement = "Heterozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "A/C", replacement = "Heterozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "T/A", replacement = "Heterozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "T/G", replacement = "Heterozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "T/C", replacement = "Heterozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "G/A", replacement = "Heterozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "G/T", replacement = "Heterozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "G/C", replacement = "Heterozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "C/A", replacement = "Heterozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "C/T", replacement = "Heterozygous") %>%
+  mutate_if(is.character, str_replace_all, pattern = "C/G", replacement = "Heterozygous") 
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{Data processing}
+
+
+
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
